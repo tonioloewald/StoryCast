@@ -73,7 +73,7 @@
         <p name="description"></p>
         <video name="video" controls width="100%"></video>
         <p>
-            <a class="button" name="user_id" prefix="mailto:">Contact Developer</a>
+            <a class="button" name="user_id" decorator="mailto">Contact Developer</a>
             <a class="button" name="link" target="_blank">Try it yourself</a>
             <a class="button" href="https://rally1.rallydev.com/slm/login.op" target="_blank">Report a Defect</a>
         </p>

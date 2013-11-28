@@ -1,10 +1,24 @@
 // super minimal jQuery replacement
-var $ = function(s){ return s ? document.querySelectorAll(s) : null; };
+var $ = function(s){ 
+    if( typeof s === 'function' ){
+        setTimeout( s, 0 );
+    } else if( typeof s === 'string' ){
+        return document.querySelectorAll(s)
+    }
+};
 
 $.noop = function(){};
 $.log = function(msg){ console.log( msg ); };
 $.identity = function(x){ return x; };
 
+Object.prototype.extend = function( obj ){
+    self = this;
+    obj.each( function(prop){
+        self[prop] = this;
+    });
+}
+
+// JSON
 $.json = function(url, data, method, success, failure, complete){
     data = data || false;
     method = method || 'GET';
@@ -83,6 +97,11 @@ NodeList.prototype.each = function( f ){
 }
 
 // DOM utilities
+Node.prototype.toNodeList = function(){
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(this);
+    return fragment.childNodes;
+}
 Node.prototype.addClass = function( c ){
     if( !this.classList.contains(c) ){
         this.classList.add(c);
@@ -218,44 +237,21 @@ NodeList.prototype.on = function(evt, f){
     return this;
 }
 
-// super minimal bindomatic replacement
+// binding
 Node.prototype.table = function(rows, decorators){
     decorators = decorators || {};
-    var setting = !!rows,
-        rows = rows || [],
-        tbody = this.querySelector('tbody'),
+    var tbody = this.querySelector('tbody'),
         templateRow = tbody.querySelector('.template').css('display', 'none');
     
-    if( setting ){
-        tbody.querySelectorAll('.instance').remove();
-        rows.each(function(){
-            var row = this,
-                tr = templateRow.cloneNode(true).removeClass('template').addClass('instance').css('display','');
-            tr.toNodeList().values(row, decorators);
-            tbody.appendChild(tr);
-        });
-    } else {
-        tbody.querySelectorAll('tr').each( function(){
-            rows.push( this.toNodeList().querySelectorAll('[name]').values() );
-        });
-    }
-    if( setting ){
-        return this;
-    } else {
-        return rows;
-    }
-}
-NodeList.prototype.table = function(rows, decorators){
-    this.each( function(){
-        this.table(rows, decorators);
+    tbody.querySelectorAll('.instance').remove();
+    rows.each(function(){
+        var row = this,
+            tr = templateRow.cloneNode(true).removeClass('template').addClass('instance').css('display','');
+        tr.toNodeList().values(row, decorators);
+        tbody.appendChild(tr);
     });
+    return this;
 }
-Node.prototype.toNodeList = function(){
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(this);
-    return fragment.childNodes;
-}
-
 NodeList.prototype.values = function(values, decorators){
     decorators = decorators || {};
     var setting = !!values,
@@ -265,7 +261,6 @@ NodeList.prototype.values = function(values, decorators){
             var name = this.getAttribute('name'),
                 decorator = decorators[this.getAttribute('decorator')] || $.identity,
                 value;
-                
             if( name ){
                 if( setting ){
                     if( values.hasOwnProperty(name) ){
@@ -278,7 +273,7 @@ NodeList.prototype.values = function(values, decorators){
                                 this.required = true;
                             }
                         } else if( this.value !== undefined ){
-                            this.value = (this.getAttribute('prefix')||'') + value;
+                            this.value = value;
                         } else if ( this.href !== undefined ) {
                             this.href = value;
                         } else if ( this.src !== undefined ){

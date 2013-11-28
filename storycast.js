@@ -8,9 +8,13 @@ function timestampToDate( stamp ){
     return d.toLocaleString();
 }
 
+function mailto( url ){
+    return "mailto:" + url;
+}
+
 function storyList(refresh_only){
     $.json('?story', false, 'GET', function(list){
-        $('#story-list table').table(list, {renderDate: timestampToDate});
+        $('#story-list table')[0].table(list, {renderDate: timestampToDate});
         if( !refresh_only ){
             window.location = '#story-list';
         }
@@ -92,7 +96,7 @@ $('#story-list table tbody').on('mouseup', function(e){
         });
     } else {
         $.json('?story', {id: id}, 'GET', function(data){
-            $('#story-detail').values(data);
+            $('#story-detail').values(data, {mailto: mailto});
             window.location = '#story-detail';
         });
     }
