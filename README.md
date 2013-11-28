@@ -34,3 +34,11 @@ I definitely drank too much coffee today -- jq.js represents my building my own 
 over the course of the day. It's kind of nutty but it does what I need (and it includes a nifty
 lightweight binding system -- see the values and table methods). I've actually got a much nicer
 binding library up my sleeve, but the licensing is in flux.
+
+Yes, the server-side stuff is written in PHP. I got so disgusted with the state of PHP's MySQL
+APIs (seriously WTF -- they've deprecated the main mysql API and replaced it with two APIs that
+seem to be no better, including methods added and deprecated since introduction) that I nearly 
+rewrote everything in nodejs halfway through but the annoyances/expense in hosting it put me off.
+
+The whole thing has a very clean RESTful API so it would be pretty easy to swap out the glue between
+the dead simple database and the almost dead simple client.
