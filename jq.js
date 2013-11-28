@@ -45,6 +45,24 @@ $.json = function(url, data, method, success, failure, complete){
     xmlhttp.send(JSON.stringify(data));
 }
 
+// shims for Safari
+if( !$('body').querySelector ){
+    NodeList.prototype.querySelector = function(selector){
+        if( this.length >= 1 ){
+            console.warn( 'querySelector not fully implemented' );
+            return this[0].querySelector(selector);
+        }
+    }
+}
+if( !$('body').querySelectorAll ){
+    NodeList.prototype.querySelectorAll = function(selector){
+        if( this.length >= 1 ){
+            console.warn( 'querySelector not fully implemented' );
+            return this[0].querySelectorAll(selector);
+        }
+    }
+}
+
 // iterators
 Object.prototype.each = function( f ){
     for( i in this ){
@@ -145,7 +163,7 @@ Node.prototype.hide = function(){
     return this;
 };
 Node.prototype.show = function(){
-    this.css('display', this.attributes.getNamedItem('data-display').value || "block");
+    this.css('display', this.getAttribute('data-display') || "block");
     return this;
 }
 NodeList.prototype.hide = function(){
@@ -212,7 +230,7 @@ Node.prototype.table = function(rows, decorators){
         tbody.querySelectorAll('.instance').remove();
         rows.each(function(){
             var row = this,
-                tr = templateRow.cloneNode().removeClass('template').addClass('instance').css('display','');
+                tr = templateRow.cloneNode(true).removeClass('template').addClass('instance').css('display','');
             tr.toNodeList().values(row, decorators);
             tbody.appendChild(tr);
         });

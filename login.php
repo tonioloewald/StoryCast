@@ -27,7 +27,7 @@ if( $method == 'GET' ){
             $_SESSION['id'] = $id;
             $response = 204;
         } else {
-            echo "hash $password_hash, submitted $password_submitted";
+            $_SESSION['id'] = 0;
         }
     }
 }

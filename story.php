@@ -1,5 +1,7 @@
 <?php
-if( $method == 'GET' ){
+if( !$_SESSION['id'] ){
+    $response = 401;
+} else if( $method == 'GET' ){
     if( isset($_GET['id']) ){
         $response = db_get_one( 'storycast', 'story', 'id', $_GET['id'] );
     } else {

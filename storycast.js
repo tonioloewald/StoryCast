@@ -14,6 +14,8 @@ function storyList(refresh_only){
         if( !refresh_only ){
             window.location = '#story-list';
         }
+    }, function(){
+        window.location = '#login';
     });
 }
 
