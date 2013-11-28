@@ -24,3 +24,13 @@ and simply import the SQL file to your database server, it should work out of th
 passwords for you given an email address).
 
 You need to create an uploads directory with appropriate permissions and that's about it.
+
+Dependencies
+------------
+
+I used this fine md5 implementation: http://www.myersdaily.org/joseph/javascript/md5-text.html
+
+I definitely drank too much coffee today -- jq.js represents my building my own jQuery replacement
+over the course of the day. It's kind of nutty but it does what I need (and it includes a nifty
+lightweight binding system -- see the values and table methods). I've actually got a much nicer
+binding library up my sleeve, but the licensing is in flux.
