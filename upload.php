@@ -14,8 +14,6 @@ function upload_file($dir, $db, $table, $field, $id){
             return FALSE;
         }
     }
-    echo( $_FILES[$field]['tmp_name'] . '<br>' );
-    echo( $filepath . '<br>' );
     return move_uploaded_file($file['tmp_name'], $filepath);
 }
 

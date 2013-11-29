@@ -33,6 +33,7 @@ if( !$_SESSION['id'] ){
                 $record[$field] = $_POST[$field];
             }
         }
+dump($record); echo "\n";
         if( !$error && db_update( 'storycast', 'story', 'id', $record['id'], $record ) ){    
             $response = $record;
         }

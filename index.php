@@ -13,11 +13,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>TMNGi StoryCast</title>
+	<title>StoryCast</title>
 	<link rel='stylesheet' type='text/css' href="storycast.css">
 </head>
 <body>
-    <h1>TMNGi StoryCast</h1>
+    <h1>StoryCast</h1>
     <form id="login" class="hidden">
         <h2>Login</h2>
         <input name="id" type="email" placeholder="Email Address" required>
