@@ -96,6 +96,38 @@ NodeList.prototype.each = function( f ){
     return this;
 }
 
+// safely access deep properties by name
+Object.prototype.valueByName = function(key, value){
+    key = key.split(/\./);
+    var i = 0,
+        lastPart,
+        member = this;
+    
+    if( value ){
+        if( key.length ){
+            lastPart = key.pop();
+            key.each(function(){
+                if( member[this] === undefined ){
+                    member[this] = {};
+                }
+                member = member[this];
+            });
+        }
+        member[lastPart] = value;
+        return this;
+    } else {
+        key.each(function(){
+            if( typeof member[this] === undefined ){
+                member = undefined;
+                return false;
+            } else {
+                member = member[this];
+            }
+        });
+        return member;
+    }
+}
+
 // DOM utilities
 Node.prototype.toNodeList = function(){
     var fragment = document.createDocumentFragment();
@@ -263,8 +295,8 @@ NodeList.prototype.values = function(values, decorators){
                 value;
             if( name ){
                 if( setting ){
-                    if( values.hasOwnProperty(name) ){
-                        value = decorator(values[name]);
+                    if( values.valueByName(name) ){
+                        value = decorator(valueByName(name));
                         if( this.type === 'file' ){
                             if( this.required && value ){
                                 this.required = false;
@@ -285,7 +317,7 @@ NodeList.prototype.values = function(values, decorators){
                 } else {
                     value = this.value || this.textContent.trim()
                     if( value ){
-                        values[name] = value;
+                        values.valueByName(name, value);
                     }
                 }
             }
