@@ -9,6 +9,8 @@ var $ = function(s){
 
 $.noop = function(){};
 $.log = function(msg){ console.log( msg ); };
+$.debug = false;
+$.debugLog = function(msg){ if(this.debug) console.log(msg); };
 $.identity = function(x){ return x; };
 
 Object.prototype.extend = function( obj ){
@@ -197,14 +199,20 @@ Node.prototype.css = function( prop, val ){
 Node.prototype.attr = function( prop, val ){
     var settings = prop,
         node = this;
-    if( typeof prop !== 'object' ){
-        settings = {};
-        settings[prop] = val;
+    if(typeof prop === 'string' && val !== undefined){
+        var attribute = this.attributes.getNamedItem(prop);
+        return attribute ? attribute.value : undefined;
+    } else {
+        if( typeof prop !== 'object' ){
+            settings = {};
+            settings[prop] = val;
+        } else {
+            settings.each(function(prop){
+                node.setAttribute(prop, this);
+            });   
+        }
+        return this;
     }
-    settings.each(function(prop){
-        node.setAttribute(prop, this);
-    });
-    return this;
 };
 Node.prototype.hide = function(){
     if( this.style.display !== 'none' ){
@@ -269,21 +277,56 @@ NodeList.prototype.on = function(evt, f){
     return this;
 }
 
-// binding
+/*  
+    ##binding arrays
+    
+    (node).table([ ..rows.. ], { decorators });
+    
+    bind array to something (e.g. a tbody) containing a row template (e.g. a tr)
+    with the template class.
+    
+    ##TODO
+    
+    var data = (node).table();
+    
+    implement inverse (capture array from instances).
+*/
 Node.prototype.table = function(rows, decorators){
     decorators = decorators || {};
-    var tbody = this.querySelector('tbody'),
-        templateRow = tbody.querySelector('.template').css('display', 'none');
+    var template = this.querySelector('.template').css('display', 'none'),
+        table = template.parentElement;
     
-    tbody.querySelectorAll('.instance').remove();
+    table.querySelectorAll('.instance').remove();
     rows.each(function(){
         var row = this,
-            tr = templateRow.cloneNode(true).removeClass('template').addClass('instance').css('display','');
+            tr = template.cloneNode(true).removeClass('template').addClass('instance').css('display','');
         tr.toNodeList().values(row, decorators);
-        tbody.appendChild(tr);
+        table.appendChild(tr);
     });
     return this;
 }
+/*
+    ##binding objects to DOM
+    
+    (nodelist).values({ ..values.. }, { ..decorators.. }
+    
+    bind values to an element and its children by name. E.g. if you
+    have an object { foo: 17, bar: { baz: "you found me" } } then you
+    can bind to an element with name="foo" or name="bar.baz" and get
+    the expected result.
+    
+    decorators are treated as computed values.
+    
+    ##recovering data from DOM
+    
+    var data = (nodelist).values();
+    
+    extract the named values from the DOM (the reverse of above).
+    
+    ###TODO:
+    Offer a UI-neutral alternative attribute (e.g. data-source) to the
+    name attribute.
+*/
 NodeList.prototype.values = function(values, decorators){
     decorators = decorators || {};
     var setting = !!values,
@@ -315,7 +358,10 @@ NodeList.prototype.values = function(values, decorators){
                         }
                     }
                 } else {
-                    value = this.value || this.textContent.trim()
+                    value = this.value 
+                            || this.href 
+                            || this.src 
+                            || this.textContent.trim();
                     if( value ){
                         values.valueByName(name, value);
                     }
